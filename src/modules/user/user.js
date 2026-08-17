@@ -28,6 +28,11 @@ const User = sequelize.define("User", {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
+    },
+    isActive:{
+        type:DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false
     }
 },{
     timestamps: true,

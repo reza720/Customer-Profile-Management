@@ -7,7 +7,7 @@ const sequelize = new Sequelize(
     env.db.db_password,{
         host: env.db.db_host,
         dialect: "mysql",
-        logging: true
+        logging: console.log
     }
 );
 
