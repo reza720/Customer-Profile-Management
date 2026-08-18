@@ -5,7 +5,10 @@ import env from "../../config/env.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import throwError from "../../utils/throwError.js";
-import { threadId } from "node:worker_threads";
+import { Op } from "sequelize";
+import sequelize from "../../config/sequelize.js";
+import { transcode } from "node:buffer";
+
 
 // signup
 // input: firstName, lastName
@@ -33,7 +36,8 @@ export async function signup({firstName, lastName}) {
 
     return {
         id: user.id,
-        fullname: `${user.firstName} ${user.lastName}`,
+        firstName: user.firstName,
+        lastName: user.lastName,
         username: user.userName,
         password: password
     }
@@ -52,7 +56,8 @@ export async function changeStatus(userId) {
 
     return {
         id: user.id,
-        fullname: `${user.firstName} ${user.lastName}`,
+        firstName: user.firstName,
+        lastName: user.lastName,
         isActive: user.isActive
     }
 };
@@ -124,30 +129,131 @@ export async function refreshAccessToken(refreshToken) {
     return accessToken;
 };
 
-
 // logout
 // input: refreshToken 
 // Hash the token
 // If refreshToken exist and revoked == null
 // increament the tokenVersion
 // revoke the refreshToken
+export async function logout(refreshToken) {
+    const tokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+    const storedRefreshToken = await Refresh_Token.findOne({
+        where:{
+            tokenHash
+        }
+    });
+    if(!storedRefreshToken) throwError("Invalid refresh token", 401);
+    if(storedRefreshToken.revokedAt !== null) throwError("Token already rovoked", 401);
+
+    const user = await User.findByPk(storedRefreshToken.userId);
+    if(!user) throwError("User not found", 404);
+
+    await user.increment("tokenVersion");
+
+    await storedRefreshToken.update({
+        revokedAt: new Date()
+    });
+};
+
+
 
 // getUser
 // input: userId
 // If user exist
 // return: id, fullName, userName
+export async function getUser(userId) {
+    const user = await User.findByPk(userId);
+    if(!user) throwError("User not found", 404);
+
+    return {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.userName,
+        isActive: user.isActive
+    }
+};
 
 // getUsers
 // input: nothing
 // support pagaination and searching by userName, fullname
 // return: sorted by firstName(Asc), id,fullname and userName, 
 // pagination metadata
+export async function getUsers(options = {}) {
+    const {
+        page = 1,
+        limit = 25,
+        search
+    } = options;
+
+    const currentPage = Number(page);
+    const currentLimit = Number(limit);
+
+    const offset = (currentPage - 1) * currentLimit;
+    const where = search
+        ? {
+            [Op.or]: [
+                {
+                    firstName: {[Op.like]: `%${search}%`}
+                },
+                {
+                    lastName: {[Op.like]: `%${search}%`}
+                }
+            ]
+        }
+        : {};
+
+    const users = await User.findAndCountAll({
+        where,
+        attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "isActive"
+        ],
+        limit: currentLimit,
+        offset,
+        order: [["firstName", "ASC"]]
+    });
+
+    const totalPages = Math.ceil(users.count / currentLimit);
+    return {
+        users: users.rows,
+        pagination: {
+            page: currentPage,
+            limit: currentLimit,
+            totalItems: users.count,
+            totalPages,
+            hasNextPage: currentPage < totalPages,
+            hasPreviousPage: currentPage > 1
+        }
+    };
+}
 
 // delete
 // input: userId
 // check if user exists
 // destroy all refresh tokens belonging to the user
 // destroy the user
+// Use transaction to destroy user and refresh token at once
+export async function deleteUser(userId) {
+    const transaction = await User.sequelize.transaction();
+    try {
+        const user = await User.findByPk(userId, { transaction });
+        if (!user) throwError("User not found", 404);
+        await user.destroy({ transaction });
+        await Refresh_Token.destroy({
+            where: {
+                userId
+            },
+            transaction
+        });
+        await transaction.commit();
+    } catch (err) {
+        await transaction.rollback();
+        throw err;
+    }
+}
 
 
 

@@ -8,9 +8,9 @@ router.post("/signup", userController.signup);
 router.patch("/:id", userController.changeStatus); 
 router.post("/login", userController.login); 
 router.post("/refresh", userController.refreshAccessToken);
-//router.post("/logout");  // authRequired
-//router.get("/:id");   
-//router.get("/"); 
-//router.delete("/:id"); 
+router.post("/logout", authRequired, userController.logout);  // authRequired
+router.get("/:id", userController.getUser);   
+router.get("/", userController.getUsers); 
+router.delete("/:id", userController.deleteUser); 
 
 export default router;

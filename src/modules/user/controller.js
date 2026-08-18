@@ -75,20 +75,70 @@ export async function refreshAccessToken(req, res, next) {
     }
 }
 
-
-
 // logout: 
 // req: from cookies
 // res: status, json(success, message)
+export async function logout(req, res, next) {
+    try{
+        await userService.logout(req.cookies.refreshToken);
+        res.clearCookie("refreshToken");
+        
+        res.status(200).json({
+            success: true,
+            message: "User logged out"
+        });
+    }
+    catch(err){
+        next(err);
+    }
+};
 
 // getUser
 // req: userId from param
 // res: status, json(success, message, data)
+export async function getUser(req, res, next) {
+    try{
+        const user = await userService.getUser(req.params.id);
+        res.status(200).json({
+            success: true,
+            message: "User fetched",
+            user
+        });
+    }
+    catch(err){
+        next(err)
+    }
+};
 
 // getUsers
 // req: nothing
 // res: status, json(success, message, data)
+export async function getUsers(req, res, next) {
+    try{
+        const users = await userService.getUsers(req.query);
+        res.status(200).json({
+            success: true, 
+            message: "Users fetched",
+            users
+        });
+    }
+    catch(err){
+        next(err);
+    }
+};
 
 // deleteUser 
 // req: userId from param
 // res: status, json(success, message)
+export async function deleteUser(req, res, next) {
+    try{
+        await userService.deleteUser(req.params.id);
+        res.status(200).json({
+            success: true,
+            message: "User deleted"
+        });
+    }
+    catch(err){
+        next(err);
+    }
+};
