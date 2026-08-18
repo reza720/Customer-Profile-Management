@@ -61,6 +61,21 @@ export async function login(req, res, next) {
 // refresh Access token
 // req: from cookies
 // status, json(success, message, access token)
+export async function refreshAccessToken(req, res, next) {
+    try{
+        const accessToken = await userService.refreshAccessToken(req.cookies.refreshToken);
+        res.status(200).json({
+            success: true, 
+            message:"New access token issued",
+            accessToken
+        });
+    }
+    catch(err){
+        next(err);
+    }
+}
+
+
 
 // logout: 
 // req: from cookies

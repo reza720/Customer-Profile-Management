@@ -5,6 +5,7 @@ import env from "../../config/env.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import throwError from "../../utils/throwError.js";
+import { threadId } from "node:worker_threads";
 
 // signup
 // input: firstName, lastName
@@ -61,10 +62,8 @@ export async function changeStatus(userId) {
 // if user exit
 // if password valid
 // if user is active
-// Generate access token
-// Generate token and hash it
-// Generate refresh token
-// Get expiration date of refresh token 
+// Generate access token (jwt)
+// Generate refresh token and hash it (crypto)
 // Create refresh token table 
 // rturn: access token and refresh token
 export async function login({userName, password}) {
@@ -81,15 +80,13 @@ export async function login({userName, password}) {
 
     const accessToken = generateAccessToken(user);
 
-    const token = crypto.randomBytes(16).toString("hex");
-    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    const refreshToken = generateRefreshToken(user, token);
-    const {exp} = jwt.verify(refreshToken, token);
+    const refreshToken = crypto.randomBytes(16).toString("hex");
+    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
 
-    const RefreshToken = await Refresh_Token.create({
+    await Refresh_Token.create({
         userId: user.id,
-        tokenHash,
-        expiresAt: new Date(exp * 1000),
+        tokenHash: refreshTokenHash,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         revokedAt: null
     });
 
@@ -107,6 +104,25 @@ export async function login({userName, password}) {
 // If user that owns the refresh table exist
 // Generate access token 
 // return access token
+export async function refreshAccessToken(refreshToken) {
+    const tokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+    const storedRefreshToken = await Refresh_Token.findOne({
+        where: {
+            tokenHash,
+            revokedAt: null
+        }
+    });
+    if(!storedRefreshToken) throwError("Invalid refresh token");
+    if(storedRefreshToken.expiresAt < new Date()){
+        throwError("Refresh Token has expired", 401);
+    }
+    const user = await User.findByPk(storedRefreshToken.userId);
+    if(!user) throwError("User with this refresh token not found", 404);
+
+    const accessToken = generateAccessToken(user);
+    
+    return accessToken;
+};
 
 
 // logout
@@ -150,21 +166,6 @@ function generateAccessToken(user){
         env.jwt.accessToken,
         {
             expiresIn: 20 * 60 
-        }
-    );
-};
-
-// Generate Refresh Token
-// input: user
-// asign: userId, secret created by crypto, expiration
-function generateRefreshToken(user, refreshToken){
-    return jwt.sign(
-        {
-            userId: user.id
-        },
-        refreshToken,
-        {
-            expiresIn: 30 * 60 * 60
         }
     );
 };
