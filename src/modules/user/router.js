@@ -12,5 +12,6 @@ router.post("/logout", authRequired, userController.logout);  // authRequired
 router.get("/:id", userController.getUser);   
 router.get("/", userController.getUsers); 
 router.delete("/:id", userController.deleteUser); 
+//router.patch("/:id/reset-password");
 
 export default router;
