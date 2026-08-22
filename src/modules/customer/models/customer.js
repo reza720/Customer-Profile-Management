@@ -1,4 +1,4 @@
-import sequelize from "../../config/sequelize.js";
+import sequelize from "../../../config/sequelize.js";
 import { DataTypes } from "sequelize";
 
 const Customer = sequelize.define("Customer",{
@@ -18,10 +18,6 @@ const Customer = sequelize.define("Customer",{
     photoURL: {
         type:DataTypes.STRING,
         allowNull:true
-    },
-    dateOfBirth:{
-        type: DataTypes.DATE,
-        allowNull: false
     },
     gender:{
         type:DataTypes.ENUM("Male", "Female"),

@@ -255,6 +255,32 @@ export async function deleteUser(userId) {
     }
 }
 
+// Reset Password
+// input: userId
+// if user exist
+// generate new passowrd
+// hash the password
+// update the User passwordHash
+// return id, username,  and password
+export async function resetPassword(userId) {
+    const user = await User.findByPk(userId);
+    if(!user) throwError("User not found", 404);
+
+    const password = generatePassword(7);
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    await user.update({
+        passwordHash
+    });
+
+    return {
+        id: user.id,
+        userName: user.userName,
+        password: password
+    }
+};
+
+
 
 
 // ------------ Helpers ---------

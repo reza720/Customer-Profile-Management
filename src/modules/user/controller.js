@@ -142,3 +142,20 @@ export async function deleteUser(req, res, next) {
         next(err);
     }
 };
+
+// Reset Password
+// req: userId from params
+// res: status, json(success, message, returned data)
+export async function resetPassword(req, res, next) {
+    try{
+        const user = await userService.resetPassword(req.params.id);
+        res.status(200).json({
+            success: true, 
+            message: "Password change",
+            user
+        });
+    }
+    catch(err){
+        next(err);
+    }
+};
