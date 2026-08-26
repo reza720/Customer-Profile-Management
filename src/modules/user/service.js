@@ -7,8 +7,6 @@ import jwt from "jsonwebtoken";
 import throwError from "../../utils/throwError.js";
 import { Op } from "sequelize";
 import sequelize from "../../config/sequelize.js";
-import { transcode } from "node:buffer";
-
 
 // signup
 // input: firstName, lastName
@@ -72,6 +70,9 @@ export async function changeStatus(userId) {
 // Create refresh token table 
 // rturn: access token and refresh token
 export async function login({userName, password}) {
+    if(!userName) throwError("Use name is required");
+    if(!password) throwError("Password is required");
+    
     const user = await User.findOne({
         where:{
             userName

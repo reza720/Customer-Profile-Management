@@ -50,15 +50,50 @@ export async function update(req, res, next) {
 // delete customer
 // req: customerId from params
 // res: status, json(success, message)
+export async function deleteCustomer(req, res, next) {
+    try{
+        await customerService.deleteCustomer(req.params.id);
+        res.status(200).json({
+            success: true,
+            message: "Customer deleted"
+        })
+    }
+    catch(err){
+        next(err);
+    }
+};
 
 // get customer
 // req: customerId from params
 // res: status, json(success, message, returned data)
-
-// get photo
-// req: from params
-// res: status, json(success, message, returned data)
+export async function getCustomer(req, res, next) {
+    try{
+        const customer = await customerService.getCustomer(req.params.id);
+        res.status(200).json({
+            success: true,
+            message: "Customer fetched",
+            customer
+        });
+    }
+    catch(err){
+        next(err);
+    }
+};
 
 // get customers
 // req: from req.query
 // res: status, json(success, message, returned data)
+export async function getCustomers(req, res, next) {
+    try{
+        const customers = await customerService.getCustomers(req.query);
+        res.status(200).json({
+            success: true, 
+            message: "customers fetched",
+            customers
+        });
+    }
+    catch(err){
+        next(err);
+    }
+};
+

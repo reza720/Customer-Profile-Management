@@ -4,6 +4,7 @@ import Contact from "./models/contact.js";
 import sequelize from "../../config/sequelize.js";
 import throwError from "../../utils/throwError.js";
 import deleteFile from "../../utils/deleteFile.js";
+import { Op } from "sequelize";
 
 // register
 // input: data(firstaName, lastName, gender, address{}, contact{})
@@ -76,12 +77,12 @@ export async function uploadPhoto(customerId, file) {
     const customer = await Customer.findByPk(customerId);
     if(!customer) throwError("Customer not found", 404);
     if(!file) throwError("File is required", 400);
-    const oldPhotoPath = customer.photoURL;
+    const oldPhotoPath = customer.photoPath;
     const newPhotoPath = file.path;
     
     try{
         await customer.update({
-            photoURL:newPhotoPath
+            photoPath:newPhotoPath
         });
     }
     catch(err){
@@ -98,7 +99,7 @@ export async function uploadPhoto(customerId, file) {
         firstName: customer.firstName,
         lastName: customer.lastName,
         gender: customer.gender,
-        photoURL: customer.photoURL
+        photoPath: customer.photoPath
     }
 };
 
@@ -157,6 +158,7 @@ export async function update(customerId, data) {
             firstName: customer.firstName,
             lastName: customer.lastName,
             gender: customer.gender,
+            photoPath: customer.photoPath,
             address:{
                 province: address.province,
                 district: address.district,
@@ -177,27 +179,109 @@ export async function update(customerId, data) {
     }
 }
 
-
 // Delete Customer
 // input: customerId
 // if cusomer exist
 // delete cutomer
 // delete photo
 // return nothing
+export async function deleteCustomer(customerId) {
+    const customer = await Customer.findByPk(customerId);
+    if(!customer) throwError("Customer not found", 404);
+
+    await customer.destroy();
+    await deleteFile(customer.photoPath);
+}
 
 // get customer
 // input: customerId
 // if customer eixst
 // return: customer basic data, address, and contact
+export async function getCustomer(customerId) {
+    const customer = await Customer.findByPk(customerId,{
+        include:[
+            {
+                model: Address,
+                attributes:[
+                    "province",
+                    "district",
+                    "area"
+                ],
+            },
+            {
+                model: Contact,
+                attributes:[
+                    "email",
+                    "phoneNumber",
+                    "whatsappNumber"
+                ]
+            }
+        ]
+    });
 
-// get photo
-// input: customerId
-// If user exist
-// if user has photo
-// return photo path
+    if(!customer) throwError("Customer not found", 404);
+    
+    return customer;
+}
 
 // get Customers
-// input: options: search(fullname), filte(gender/created range)
-//     sortng(lastName / createdAt: default), page, limit
+// input: options: search(fullname), page, limit, sort(createdAt: default),
 // return: rows + pagination metadata
+export async function getCustomers(options = {}) {
+    const {
+        page = 1,
+        limit = 20,
+        search
+    } = options;
+    
+    const currentPage = Number(page);
+    const pageLimit = Number(limit);
 
+    const offset = (currentPage -1) * pageLimit;
+    const where = search ? {
+        [Op.or]:[
+            {
+                firstName:{[Op.like]: `%${search}%`}
+            },
+            {
+                lastName:{[Op.like]: `%${search}%`}
+            }
+        ]
+    }: {};
+
+    const customers = await Customer.findAndCountAll({
+        where,
+        include:[
+            {
+                model: Address,
+                attributes:[
+                    "province",
+                    "district",
+                    "area"
+                ]
+            },
+            {
+                model: Contact,
+                attributes:[
+                    "email",
+                    "phoneNumber",
+                    "whatsappNumber"
+                ]
+            }
+        ],
+        limit: pageLimit,
+        offset,
+        order: [["createdAt", "DESC"]],
+        distinct: true
+    });
+
+    return {
+        customers: customers.rows,
+        pagination:{
+            page: currentPage,
+            limit: pageLimit,
+            totalPages: Math.ceil(customers.count / pageLimit),
+            totalCustomers: customers.count
+        }
+    }
+};

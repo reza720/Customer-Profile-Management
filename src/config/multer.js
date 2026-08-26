@@ -16,7 +16,7 @@ const fileFilter = (req, file, cb) => {
         cb(null, true);
     }
     else{
-        cb(new Error("Invalid filr formate", false))
+        cb(new Error("Invalid file formate", false))
     }
 }
 

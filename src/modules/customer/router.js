@@ -5,14 +5,26 @@ import upload from "../../config/multer.js";
 
 const router = express.Router();
 
-router.post("/register", authRequired, customerController.register);
-router.post("/:id/photo", authRequired, upload.single("photo"), customerController.uploadPhoto);
+router.post("/register", 
+    authRequired,
+    customerController.register);
+router.post("/:id/photo", 
+    authRequired,
+    upload.single("photo"), 
+    customerController.uploadPhoto);
 
-router.patch("/:id", authRequired, customerController.update);
-//router.delete("/:id", authRequired);
+router.patch("/:id", 
+    authRequired,
+    customerController.update);
+router.delete("/:id", 
+    authRequired,
+    customerController.deleteCustomer);
 
-//router.get("/:id", authRequired);
-//router.get("/:id/photo", authRequired);
-//router.get("/", authRequired);
+router.get("/:id",
+    authRequired,
+    customerController.getCustomer);
+router.get("/", 
+    authRequired,
+    customerController.getCustomers);
 
 export default router;

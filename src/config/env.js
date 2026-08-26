@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import path, { dirname } from "node:path";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,6 +21,9 @@ const env = {
     },
     jwt:{
         accessToken: process.env.ACCESS_TOKEN
+    },
+    googleSheet:{
+        apikey: process.env.GOOGLE_SHEET_API_KEY
     }
 };
 

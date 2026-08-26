@@ -15,7 +15,7 @@ const Customer = sequelize.define("Customer",{
         type:DataTypes.STRING,
         allowNull: false
     },
-    photoURL: {
+    photoPath: {
         type:DataTypes.STRING,
         allowNull:true
     },
