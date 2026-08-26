@@ -1,7 +1,9 @@
 import * as customerController from "./controller.js";
 import express from "express";
 import authRequired from "../../middleware/authRequired.js";
+import authRequiredForExcel from "../../middleware/apiKeyRequired.js";
 import upload from "../../config/multer.js";
+import apiKeyRequired from "../../middleware/apiKeyRequired.js";
 
 const router = express.Router();
 
@@ -26,5 +28,8 @@ router.get("/:id",
 router.get("/", 
     authRequired,
     customerController.getCustomers);
+router.get("/excel", 
+    apiKeyRequired, 
+    customerController.getCustomers)
 
 export default router;

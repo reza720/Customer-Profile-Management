@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import env from "../config/env.js";
-import User from "../modules/user/User.js";
+import User from "../modules/auth/User.js";
 import throwError from "../utils/throwError.js";
 
 async function authRequired(req, res, next){

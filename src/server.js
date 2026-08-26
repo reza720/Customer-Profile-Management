@@ -8,7 +8,7 @@ import env from "./config/env.js";
         await sequelize.sync();
         console.log("DB connected");
 
-    app.listen(env.server.port, ()=>{
+    app.listen(env.server.port, "0.0.0.0", ()=>{
         console.log("Server is Running");
     })
         

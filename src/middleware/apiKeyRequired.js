@@ -1,6 +1,6 @@
-import env from "../../config/env.js";
+import env from "../config/env.js";
 
-function authRequired(req, res, next){
+function apiKeyRequired(req, res, next){
     const apiKey = req.get("X-API-Key");
 
     if(!apiKey){
@@ -20,4 +20,4 @@ function authRequired(req, res, next){
     next();
 }
 
-export default authRequired;
+export default apiKeyRequired;
