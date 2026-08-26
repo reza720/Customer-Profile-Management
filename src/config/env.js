@@ -22,8 +22,8 @@ const env = {
     jwt:{
         accessToken: process.env.ACCESS_TOKEN
     },
-    googleSheet:{
-        apikey: process.env.GOOGLE_SHEET_API_KEY
+    excel:{
+        apikey: process.env.EXCEL_API_KEY
     }
 };
 

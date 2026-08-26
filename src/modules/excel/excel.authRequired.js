@@ -10,7 +10,7 @@ function authRequired(req, res, next){
         });
     }
 
-    if(apiKey !== env.googleSheet.apikey){
+    if(apiKey !== env.excel.apikey){
         res.status(401).json({
             success: false,
             message: "Invalid API key"
