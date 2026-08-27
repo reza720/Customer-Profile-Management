@@ -96,4 +96,3 @@ export async function getCustomers(req, res, next) {
         next(err);
     }
 };
-
