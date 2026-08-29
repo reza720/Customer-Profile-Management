@@ -24,3 +24,11 @@ The project currently does **not include admin authentication**, but the system 
 For **user** authentication, the system uses a **JWT-based authentication system**. The admin creates user accounts, and a username and randomly generated password are provided to each user. Users can log in using these credentials.
 
 A **refresh token** is used to maintain the user's session for a longer period and to obtain new access tokens when the current access token expires.
+
+The photos of customers are stored in local storage.
+
+The project uses a **Modular Architecture** and is organized into three modules:
+- Customers
+- Auth
+- Excel
+
