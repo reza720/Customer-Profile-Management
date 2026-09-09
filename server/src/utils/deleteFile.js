@@ -1,16 +1,7 @@
-import fs from "node:fs/promises";
+import fs from 'node:fs/promises';
 
 async function deleteFile(path) {
-   try{
-        await fs.unlink(path);
-        return true;
-   }
-   catch(err){
-        throw err;
-   }
-};
+  return await fs.unlink(path);
+}
 
 export default deleteFile;
-
-
-

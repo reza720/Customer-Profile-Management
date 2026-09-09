@@ -1,9 +1,9 @@
-import express from "express";
-import hpp from "hpp";
-import helmet from "helmet";
-import router from "../src/routes/index.js";
-import globalErrorHandler from "../src/middleware/globalErrorHandler.js";
-import cookieParser from "cookie-parser";
+import express from 'express';
+import hpp from 'hpp';
+import helmet from 'helmet';
+import router from '../src/routes/index.js';
+import globalErrorHandler from '../src/middleware/globalErrorHandler.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -12,13 +12,13 @@ app.use(hpp());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api", router);
+app.use('/api', router);
 
-app.use((req, res, next) => {
-    res.status(404).json({
-        success: false,
-        message: "Route not found"
-    });
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  });
 });
 
 app.use(globalErrorHandler);

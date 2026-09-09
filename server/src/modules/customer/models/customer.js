@@ -1,35 +1,39 @@
-import sequelize from "../../../config/sequelize.js";
-import { DataTypes } from "sequelize";
+import sequelize from '../../../config/sequelize.js';
+import { DataTypes } from 'sequelize';
 
-const Customer = sequelize.define("Customer",{
+const Customer = sequelize.define(
+  'Customer',
+  {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true, 
-        primaryKey: true
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
     firstName: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     lastName: {
-        type:DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     photoPath: {
-        type:DataTypes.STRING,
-        allowNull:true
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-    gender:{
-        type:DataTypes.ENUM("Male", "Female"),
-        allowNull: false
-    }
-},{
+    gender: {
+      type: DataTypes.ENUM('Male', 'Female'),
+      allowNull: false,
+    },
+  },
+  {
     timestamps: true,
-    indexes:[
-        {
-            fields: ["firstName", "lastName"]
-        }
-    ]
-});
+    indexes: [
+      {
+        fields: ['firstName', 'lastName'],
+      },
+    ],
+  },
+);
 
 export default Customer;

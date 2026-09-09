@@ -1,0 +1,25 @@
+{
+  "name": "customer_profile_managment",
+  "version": "1.0.0",
+  "description": "The project helps manage customer profiles and makes customer data easily and securely accessible in spreadsheets for analysis. It also allows administrators to securely manage user accounts.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reza720/Customer-Profile-Management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/reza720/Customer-Profile-Management/issues"
+  },
+  "homepage": "https://github.com/reza720/Customer-Profile-Management#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
