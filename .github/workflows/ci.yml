@@ -56,4 +56,4 @@ jobs:
 
       - name: Check format
         working-directory: server
-        run: npm run check:format
+        run: npm run format:check
