@@ -19,12 +19,6 @@ const env = {
     db_password: process.env.DB_PASSWORD,
     db_host: process.env.DB_HOST,
   },
-  jwt: {
-    accessToken: process.env.ACCESS_TOKEN,
-  },
-  excel: {
-    apikey: process.env.EXCEL_API_KEY,
-  },
 };
 
 export default env;
