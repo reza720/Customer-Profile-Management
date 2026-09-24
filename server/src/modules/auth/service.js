@@ -1,5 +1,5 @@
-import User from './User.js';
-import Refresh_Token from './refreshToken.js';
+import User from './models/user.js';
+import Refresh_Token from './models/refreshToken.js';
 import crypto from 'node:crypto';
 import env from '../../config/env.js';
 import bcrypt from 'bcrypt';

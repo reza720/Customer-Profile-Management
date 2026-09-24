@@ -3,7 +3,7 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['node_modules/', 'coverage/', 'storage/'],
+    ignores: ['node_modules/', '.env', 'storage/'],
   },
 
   {

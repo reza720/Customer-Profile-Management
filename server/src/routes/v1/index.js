@@ -1,6 +1,6 @@
-import userRouter from '../modules/auth/router.js';
-import customerRouter from '../modules/customer/router.js';
-import excelRouter from '../modules/excel/router.js';
+import userRouter from '../../modules/auth/router.v1.js';
+import customerRouter from '../../modules/customer/router.v1.js';
+import excelRouter from '../../modules/excel/router.v1.js';
 
 import express from 'express';
 
